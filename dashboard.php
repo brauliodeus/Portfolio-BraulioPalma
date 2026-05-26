@@ -40,26 +40,13 @@ if (isset($_GET['logout'])) {
 
             <ul class="nav flex-column mb-auto">
                 <li class="nav-item">
-                    <a href="#" class="nav-link py-2 px-3"
-                        onclick="alert('Módulo de Biografía en construcción.'); return false;">
-                        <i class="bi bi-person me-2"></i> Biografía
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link py-2 px-3"
-                        onclick="alert('Módulo de Habilidades en construcción.'); return false;">
-                        <i class="bi bi-wrench me-2"></i> Habilidades
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link py-2 px-3"
-                        onclick="alert('Módulo de Tecnologías en construcción.'); return false;">
-                        <i class="bi bi-code-slash me-2"></i> Tecnologías
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a href="#" class="nav-link py-2 px-3 active" id="tab-projects">
+                    <a href="#" class="nav-link py-2 px-3 active" id="tab-projects" onclick="switchTab('projects'); return false;">
                         <i class="bi bi-folder me-2"></i> Proyectos
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a href="#" class="nav-link py-2 px-3" id="tab-messages" onclick="switchTab('messages'); return false;">
+                        <i class="bi bi-envelope me-2"></i> Mensajes
                     </a>
                 </li>
             </ul>
@@ -87,7 +74,8 @@ if (isset($_GET['logout'])) {
                 </div>
             </div>
 
-            <div class="card border-0 shadow-sm rounded-3">
+            <div id="section-projects">
+                <div class="card border-0 shadow-sm rounded-3">
                 <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
                     <h5 class="mb-0 fw-bold">Gestionar Proyectos</h5>
                     <button class="btn btn-primary btn-sm" onclick="openProjectModal()">
@@ -112,6 +100,34 @@ if (isset($_GET['logout'])) {
                                 </tr>
                             </tbody>
                         </table>
+                    </div>
+                </div>
+            </div>
+            </div>
+
+            <div id="section-messages" style="display: none;">
+                <div class="card border-0 shadow-sm rounded-3">
+                    <div class="card-header bg-white p-4 border-bottom d-flex justify-content-between align-items-center">
+                        <h5 class="mb-0 fw-bold">Mensajes de Contacto</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <div class="table-responsive">
+                            <table class="table table-hover align-middle mb-0">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th class="px-4 py-3" style="width: 15%">Fecha</th>
+                                        <th class="px-4 py-3" style="width: 20%">Nombre</th>
+                                        <th class="px-4 py-3" style="width: 20%">Email</th>
+                                        <th class="px-4 py-3" style="width: 45%">Asunto / Mensaje</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="messagesTableBody">
+                                    <tr>
+                                        <td colspan="4" class="text-center py-4">Cargando mensajes...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
                     </div>
                 </div>
             </div>

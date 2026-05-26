@@ -235,3 +235,71 @@ function toggleLock(id, newStatus) {
         Swal.fire('Error', 'No se pudo contactar con el servidor.', 'error');
     });
 }
+
+// Cambiar de pestaña
+function switchTab(tab) {
+    // Actualizar estilos del menú
+    document.getElementById('tab-projects').classList.remove('active');
+    document.getElementById('tab-messages').classList.remove('active');
+    document.getElementById(`tab-${tab}`).classList.add('active');
+
+    // Ocultar todas las secciones
+    document.getElementById('section-projects').style.display = 'none';
+    document.getElementById('section-messages').style.display = 'none';
+
+    // Mostrar sección actual
+    document.getElementById(`section-${tab}`).style.display = 'block';
+
+    if (tab === 'messages') {
+        loadMessages();
+    } else if (tab === 'projects') {
+        loadProjects();
+    }
+}
+
+// Cargar mensajes mediante AJAX
+function loadMessages() {
+    const tbody = document.getElementById('messagesTableBody');
+    tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4"><span class="spinner-border spinner-border-sm"></span> Cargando...</td></tr>';
+
+    fetch('api/messages_api.php')
+        .then(response => response.json())
+        .then(data => {
+            if (data.status === 'success') {
+                renderMessagesTable(data.data);
+            } else {
+                tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">${data.message}</td></tr>`;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            tbody.innerHTML = `<tr><td colspan="4" class="text-center py-4 text-danger">Error al cargar los mensajes.</td></tr>`;
+        });
+}
+
+// Renderizar la tabla de mensajes
+function renderMessagesTable(messages) {
+    const tbody = document.getElementById('messagesTableBody');
+    tbody.innerHTML = '';
+
+    if (messages.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="4" class="text-center py-4 text-muted">No hay mensajes.</td></tr>';
+        return;
+    }
+
+    messages.forEach(msg => {
+        const date = new Date(msg.created_at).toLocaleString('es-ES');
+        
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+            <td class="px-4 py-3 small text-muted">${date}</td>
+            <td class="px-4 py-3 fw-medium">${msg.name}</td>
+            <td class="px-4 py-3"><a href="mailto:${msg.email}" class="text-decoration-none">${msg.email}</a></td>
+            <td class="px-4 py-3">
+                <strong>${msg.subject}</strong><br>
+                <span class="text-muted small">${msg.message}</span>
+            </td>
+        `;
+        tbody.appendChild(tr);
+    });
+}
