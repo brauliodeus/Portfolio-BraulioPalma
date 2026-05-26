@@ -39,10 +39,19 @@ function renderProjectsTable(projects) {
 
     projects.forEach(project => {
         const desc = project.description.length > 80 ? project.description.substring(0, 80) + '...' : project.description;
-        const isLocked = project.is_locked == 1 || project.is_locked === true;
+        
+        const permanentTitles = ['Portfolio-BraulioPalma', 'SteamStorm', 'API - Centro de estudiantes'];
+        const isPermanent = permanentTitles.includes(project.title);
+        
+        const isLocked = project.is_locked == 1 || project.is_locked === true || isPermanent;
         const lockIcon = isLocked ? 'bi-lock-fill' : 'bi-unlock';
         const lockClass = isLocked ? 'btn-outline-warning' : 'btn-outline-secondary';
         
+        const disabledAttr = isPermanent ? 'disabled' : '';
+        const lockClick = isPermanent ? '' : `onclick="toggleLock(${project.id}, ${isLocked ? 0 : 1})"`;
+        const editClick = isPermanent ? '' : `onclick="editProject(${project.id}, ${isLocked})"`;
+        const delClick = isPermanent ? '' : `onclick="deleteProject(${project.id}, ${isLocked})"`;
+
         const tr = document.createElement('tr');
         tr.innerHTML = `
             <td class="px-4 py-3">
@@ -50,16 +59,18 @@ function renderProjectsTable(projects) {
             </td>
             <td class="px-4 py-3 fw-medium">${project.title}</td>
             <td class="px-4 py-3 text-muted small">${desc}</td>
-            <td class="px-4 py-3 text-end">
-                <button class="btn btn-sm ${lockClass} me-1" onclick="toggleLock(${project.id}, ${isLocked ? 0 : 1})" title="${isLocked ? 'Desbloquear' : 'Bloquear'}">
-                    <i class="bi ${lockIcon}"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-primary me-1" onclick="editProject(${project.id}, ${isLocked})">
-                    <i class="bi bi-pencil"></i>
-                </button>
-                <button class="btn btn-sm btn-outline-danger" onclick="deleteProject(${project.id}, ${isLocked})">
-                    <i class="bi bi-trash"></i>
-                </button>
+            <td class="px-4 py-3">
+                <div class="d-flex justify-content-end gap-1">
+                    <button class="btn btn-sm ${lockClass}" ${lockClick} ${disabledAttr} title="${isPermanent ? 'Proyecto Principal Bloqueado' : (isLocked ? 'Desbloquear' : 'Bloquear')}">
+                        <i class="bi ${lockIcon}"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-primary" ${editClick} ${disabledAttr} title="${isPermanent ? 'No se puede editar' : 'Editar'}">
+                        <i class="bi bi-pencil"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger" ${delClick} ${disabledAttr} title="${isPermanent ? 'No se puede eliminar' : 'Eliminar'}">
+                        <i class="bi bi-trash"></i>
+                    </button>
+                </div>
             </td>
         `;
         tbody.appendChild(tr);

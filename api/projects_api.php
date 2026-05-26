@@ -70,10 +70,16 @@ switch ($method) {
         // Actualizar proyecto
         if (!empty($data->id) && !empty($data->title) && !empty($data->description) && !empty($data->image_url)) {
             try {
-                $checkStmt = $pdo->prepare("SELECT is_locked FROM projects WHERE id = :id");
+                $checkStmt = $pdo->prepare("SELECT is_locked, title FROM projects WHERE id = :id");
                 $checkStmt->bindValue(':id', $data->id);
                 $checkStmt->execute();
                 $proj = $checkStmt->fetch();
+                $permanent_titles = ['Portfolio-BraulioPalma', 'SteamStorm', 'API - Centro de estudiantes'];
+                if ($proj && in_array($proj->title, $permanent_titles)) {
+                    http_response_code(403);
+                    echo json_encode(['status' => 'error', 'message' => 'Este proyecto principal no puede ser editado.']);
+                    break;
+                }
                 if ($proj && $proj->is_locked) {
                     http_response_code(403);
                     echo json_encode(['status' => 'error', 'message' => 'El proyecto está bloqueado y no puede ser editado.']);
@@ -109,10 +115,16 @@ switch ($method) {
         $delete_id = isset($_GET['id']) ? $_GET['id'] : (isset($data->id) ? $data->id : null);
         if ($delete_id) {
             try {
-                $checkStmt = $pdo->prepare("SELECT is_locked FROM projects WHERE id = :id");
+                $checkStmt = $pdo->prepare("SELECT is_locked, title FROM projects WHERE id = :id");
                 $checkStmt->bindValue(':id', $delete_id);
                 $checkStmt->execute();
                 $proj = $checkStmt->fetch();
+                $permanent_titles = ['Portfolio-BraulioPalma', 'SteamStorm', 'API - Centro de estudiantes'];
+                if ($proj && in_array($proj->title, $permanent_titles)) {
+                    http_response_code(403);
+                    echo json_encode(['status' => 'error', 'message' => 'Este proyecto principal no puede ser eliminado.']);
+                    break;
+                }
                 if ($proj && $proj->is_locked) {
                     http_response_code(403);
                     echo json_encode(['status' => 'error', 'message' => 'El proyecto está bloqueado y no puede ser eliminado.']);
@@ -144,6 +156,17 @@ switch ($method) {
         // Alternar bloqueo
         if (!empty($data->id) && isset($data->is_locked)) {
             try {
+                $checkStmt = $pdo->prepare("SELECT title FROM projects WHERE id = :id");
+                $checkStmt->bindValue(':id', $data->id);
+                $checkStmt->execute();
+                $proj = $checkStmt->fetch();
+                $permanent_titles = ['Portfolio-BraulioPalma', 'SteamStorm', 'API - Centro de estudiantes'];
+                if ($proj && in_array($proj->title, $permanent_titles)) {
+                    http_response_code(403);
+                    echo json_encode(['status' => 'error', 'message' => 'El estado de bloqueo de este proyecto principal no puede ser modificado.']);
+                    break;
+                }
+
                 $stmt = $pdo->prepare("UPDATE projects SET is_locked = :is_locked WHERE id = :id");
                 $stmt->bindValue(':is_locked', $data->is_locked ? 1 : 0, PDO::PARAM_INT);
                 $stmt->bindValue(':id', $data->id, PDO::PARAM_INT);
