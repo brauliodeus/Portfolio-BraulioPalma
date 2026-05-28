@@ -35,6 +35,7 @@ Si deseas correr este proyecto en tu entorno local, sigue estos pasos:
 ## 👨‍💻 Autor
 
 *   **Braulio Palma** - [Mi GitHub](https://github.com/brauliodeus)
+*   **Proyecto subido a producción** - [Portfolio](https://teclab.uct.cl/~bpalma2025/index.php)
 
 ---
 *Este archivo README fue generado automáticamente.*
